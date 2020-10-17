@@ -31,6 +31,8 @@ dependencies:
   get: ^3.8.0
   flutter_svg: ^0.18.0
   intl: ^0.16.0
+  shared_preferences: ^0.5.12+2
+  dio: ^3.0.10
 
 dev_dependencies:
   flutter_test:

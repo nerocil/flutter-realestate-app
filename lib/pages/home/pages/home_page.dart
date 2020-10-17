@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_real_estate/pages/auth/pages/register_page.dart';
 import 'package:flutter_real_estate/pages/home/pages/home_tab_page.dart';
 import 'package:flutter_real_estate/pages/profile/pages/profile_page.dart';
 
 import 'package:flutter_real_estate/pages/search/pages/search_page.dart';
+import 'package:get/get.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -36,6 +38,10 @@ class _HomePageState extends State<HomePage> {
           showUnselectedLabels: true,
           currentIndex: currentIndex,
           onTap: (index) {
+            if(index == 3){
+              Get.to(RegisterPage());
+              return;
+            }
             _pageController.jumpToPage(index);
             setState(() {
               currentIndex = index;
