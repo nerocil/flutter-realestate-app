@@ -35,6 +35,8 @@ class User {
   String businessEmail;
   String image;
   String email;
+  String password;
+  String passwordConfirmation;
   String emailVerifiedAt;
   Favorites favorites;
   int status;
@@ -56,6 +58,8 @@ class User {
         this.businessEmail,
         this.image,
         this.email,
+        this.password,
+        this.passwordConfirmation,
         this.emailVerifiedAt,
         this.favorites,
         this.status,
@@ -79,6 +83,8 @@ class User {
     businessEmail = json['business_email'];
     image = json['image'];
     email = json['email'];
+    password = json['password'];
+    passwordConfirmation = json['password_confirmation'];
     emailVerifiedAt = json['email_verified_at'];
     favorites = json['favorites'] != null
         ? new Favorites.fromJson(json['favorites'])
@@ -101,6 +107,8 @@ class User {
     data['name'] = this.name;
     data['first_name'] = this.firstName;
     data['last_name'] = this.lastName;
+    data['password'] = this.password;
+    data['password_confirmation'] = this.passwordConfirmation;
     if (this.phone != null) {
       data['phone'] = this.phone.toJson();
     }

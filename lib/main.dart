@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_real_estate/common/appHelper.dart';
+import 'package:flutter_real_estate/controllers/user_controller.dart';
+import 'package:flutter_real_estate/models/user_response.dart';
 import 'package:flutter_real_estate/pages/home/land_page.dart';
 import 'package:get/get.dart';
 
@@ -6,8 +11,32 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final UserController userController = Get.put(UserController());
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      String jsonUser = await AppHelper.getUser();
+      String token = await AppHelper.getToken();
+
+      if (token != null) {
+        Get.find<UserController>().updateUser(user: User.fromJson(jsonDecode(jsonUser)));
+        Get.find<UserController>().updateUserToken(token: token);
+
+
+        print(Get.find<UserController>().userToken);
+        print(Get.find<UserController>().userResponse.value.user.email);
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -17,16 +46,16 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
         scaffoldBackgroundColor: Colors.white,
         fontFamily: "regular",
-       tabBarTheme: TabBarTheme(
-         indicatorSize: TabBarIndicatorSize.label,
-         labelColor: Colors.black,
-         labelStyle: TextStyle(
-           color: Colors.black,
-           fontFamily: "Medium",
-           fontSize: 18,
-         ),
-         unselectedLabelColor: Colors.grey,
-       ),
+        tabBarTheme: TabBarTheme(
+          indicatorSize: TabBarIndicatorSize.label,
+          labelColor: Colors.black,
+          labelStyle: TextStyle(
+            color: Colors.black,
+            fontFamily: "Medium",
+            fontSize: 18,
+          ),
+          unselectedLabelColor: Colors.grey,
+        ),
         indicatorColor: Colors.green[700],
         splashColor: Colors.grey,
         appBarTheme: AppBarTheme(
@@ -42,4 +71,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

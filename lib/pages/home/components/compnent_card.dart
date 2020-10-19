@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_real_estate/common/app_helper.dart';
+import 'package:flutter_real_estate/common/appHelper.dart';
 import 'package:flutter_real_estate/pages/home/models/home_model.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
