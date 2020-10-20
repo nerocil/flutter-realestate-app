@@ -16,6 +16,12 @@ class _ManageAccountState extends State<ManageAccount> {
 
   bool _userFormAutoValidate = false;
   bool _isLoading = false;
+  String selectedCountry;
+
+  final  countries = {
+    "Tz": "Tanzania",
+    "Bw": "Botswana"
+  };
 
   _updateUserInfo({@required User user}) async{
     setState(() {
@@ -56,7 +62,6 @@ class _ManageAccountState extends State<ManageAccount> {
 
   _resetState(){
     setState(() {
-      _userFormAutoValidate = false;
       _isLoading = false;
     });
   }
@@ -256,14 +261,14 @@ class _ManageAccountState extends State<ManageAccount> {
                           autofocus: false,
                           initialValue: user.phone.phone1 ?? "",
                           keyboardType: TextInputType.phone,
-                          textInputAction: TextInputAction.next,
-                          onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                          textInputAction: TextInputAction.done,
+                          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
                           inputFormatters: [
                             FilteringTextInputFormatter.deny(RegExp(r"\s")),
                             FilteringTextInputFormatter.allow(RegExp(r"[0-9]"))
                           ],
                           validator: (value) {
-                            return !GetUtils.isPhoneNumber(value) ? "Enter valid Phone number" : null;
+
                           },
                           onSaved: (value){ user.phone.phone1 = value; },
                           decoration:
@@ -282,7 +287,7 @@ class _ManageAccountState extends State<ManageAccount> {
                             FilteringTextInputFormatter.allow(RegExp(r"[0-9]"))
                           ],
                           validator: (value) {
-
+                              return value.length < 9 ? "Enter valid phone number" :null;
                           },
                           onSaved: (value){ user.phone.phone2 = value; },
                           decoration:
@@ -290,24 +295,35 @@ class _ManageAccountState extends State<ManageAccount> {
                         ),
                         Divider(endIndent: 15),
                         SizedBox(height: 10),
-                        TextFormField(
-                          initialValue: "Tanzania",
-                          decoration: InputDecoration(
-                            hintText: "Country",
-                            labelText: "Country",
-                            contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                            suffixIcon: Icon(
-                              Icons.keyboard_arrow_right,
-                              color: Colors.grey,
-                            ),
-                            alignLabelWithHint: true,
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.transparent, width: 1),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.transparent, width: 1),
-                            ),
-                          ),
+                        FormField<String>(
+                          builder: (FormFieldState<String> state) {
+                            return InputDecorator(
+                              decoration: inputDecoration
+                                  .copyWith(labelText: "Select country", hintText: "Select country"),
+                              //isEmpty: false,
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  items: countries.entries
+                                      .map<DropdownMenuItem<String>>(
+                                          (MapEntry<String, String> e) => DropdownMenuItem<String>(
+                                        value: e.key,
+                                        child: Text( e.value ),
+                                      ))
+                                      .toList(),
+
+                                  icon: Icon(Icons.list, color: Colors.transparent,),
+                                  value: selectedCountry ?? user.country?? "Tz",
+                                  onChanged: (String value) {
+                                    FocusScope.of(context).requestFocus(new FocusNode());
+                                    setState(() {
+                                      selectedCountry = value;
+                                    });
+                                    user.country = value;
+                                  },
+                                ),
+                              ),
+                            );
+                          },
                         ),
                         Divider(endIndent: 15),
                         SizedBox(height: 10),

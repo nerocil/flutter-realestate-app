@@ -217,15 +217,13 @@ class _RegisterPageState extends State<RegisterPage> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         minWidth: 200,
                         height: 45,
-                        child: RaisedButton(
+                        child: _isLoading ? CircularProgressIndicator() :RaisedButton(
                           child: Text(
-                            _isLoading ? "Loading..." : "Register",
+                            "Register",
                             style: TextStyle(color: Colors.white),
                           ),
                           color: Colors.blue,
-                          onPressed: _isLoading
-                              ? null
-                              : () {
+                          onPressed:() {
                                   _register();
                                 },
                         ),

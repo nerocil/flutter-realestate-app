@@ -192,15 +192,13 @@ class _LoginPageState extends State<LoginPage> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         minWidth: 200,
                         height: 45,
-                        child: RaisedButton(
+                        child: _isLoading ? CircularProgressIndicator() :RaisedButton(
                           child: Text(
-                            _isLoading ? "Loading..." : "Login",
+                            "Login",
                             style: TextStyle(color: Colors.white),
                           ),
                           color: Colors.blue,
-                          onPressed: _isLoading
-                              ? null
-                              : () {
+                          onPressed: () {
                                   _register();
                                 },
                         ),
