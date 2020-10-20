@@ -6,7 +6,7 @@ import 'package:flutter_real_estate/models/user_response.dart';
 import 'package:flutter_real_estate/common/appHelper.dart';
 import 'package:flutter_real_estate/pages/auth/pages/register_page.dart';
 import 'package:flutter_real_estate/pages/profile/pages/profile_page.dart';
-import 'package:flutter_real_estate/servieces/http_service.dart';
+import 'package:flutter_real_estate/services/http_service.dart';
 import 'package:get/get.dart';
 
 class LoginPage extends StatefulWidget {

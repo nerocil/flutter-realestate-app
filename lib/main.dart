@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Real Estate',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.white,
         fontFamily: "regular",
         tabBarTheme: TabBarTheme(
@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
           ),
           unselectedLabelColor: Colors.grey,
         ),
-        indicatorColor: Colors.green[700],
+        indicatorColor: Colors.blue,
         splashColor: Colors.grey,
         appBarTheme: AppBarTheme(
             brightness: Brightness.light,

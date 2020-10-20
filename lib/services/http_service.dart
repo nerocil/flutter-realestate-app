@@ -61,4 +61,10 @@ class HttpService{
     Dio dio = Dio(dioOption());
     return await dio.get(url);
   }
+
+  Future<Response> updateUserData({@required String url, @required String token, @required User user}) async {
+    this.token = token;
+    Dio dio = Dio(dioOption());
+    return await dio.patch(url, data: user.toJson());
+  }
 }
