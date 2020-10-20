@@ -56,6 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 
       if (response.statusCode == 200) {
+        //todo validate email account
         final userResponse = UserResponse.fromJson(response.data);
         
         if (userResponse.error) {
@@ -134,7 +135,7 @@ class _RegisterPageState extends State<RegisterPage> {
             child: SingleChildScrollView(
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                padding: EdgeInsets.only(top: 10, left: 20, bottom: 10, right: 0),
+                padding: EdgeInsets.only(top: 10, left: 20, bottom: 10, right: 20),
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.blueGrey[100].withAlpha(245)),
                 child: Form(
@@ -143,7 +144,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(height: 20),
+                      SizedBox(height: 10),
+                      Text(
+                        "Create Account",
+                        style: Get.textTheme.headline6,
+                      ),
+
                       TextFormField(
                         autofocus: false,
                         controller: _firstNameTextFieldController,
@@ -160,7 +166,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         decoration:
                             inputDecoration.copyWith(hintText: 'Enter your first name', labelText: 'First name'),
                       ),
-                      Divider(endIndent: 15),
+                      Divider(),
                       SizedBox(height: 10),
                       TextFormField(
                         autofocus: false,
@@ -177,7 +183,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         },
                         decoration: inputDecoration.copyWith(hintText: 'Enter your last name', labelText: 'Last name'),
                       ),
-                      Divider(endIndent: 15),
+                      Divider(),
                       SizedBox(height: 10),
                       TextFormField(
                         autofocus: false,
@@ -191,7 +197,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         },
                         decoration: inputDecoration.copyWith(hintText: 'Enter your email address', labelText: 'Email'),
                       ),
-                      Divider(endIndent: 15),
+                      Divider(),
                       SizedBox(height: 10),
                       TextFormField(
                         controller: _passwordTextFieldController,
@@ -206,7 +212,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         },
                         decoration: inputDecoration.copyWith(hintText: 'Enter Password', labelText: 'Password'),
                       ),
-                      Divider(endIndent: 15),
+                      Divider(),
                       SizedBox(height: 10),
                       ButtonTheme(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

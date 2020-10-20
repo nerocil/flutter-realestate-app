@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         final userResponse = UserResponse.fromJson(response.data);
-        
+
         if (userResponse.error) {
           setState(() {
             _isLoading = false;
@@ -66,8 +66,6 @@ class _LoginPageState extends State<LoginPage> {
           return;
         }
 
-
-
         await AppHelper.setToken(token: userResponse.user.token);
         String userToken = userResponse.user.token;
         userResponse.user.token = null;
@@ -76,10 +74,9 @@ class _LoginPageState extends State<LoginPage> {
         _userController.updateUser(user: userResponse.user);
         _userController.updateUserToken(token: userToken);
 
-        Get.find<NavigationBottomController>().updateIndex(index: 3);// got to profile page
+        Get.find<NavigationBottomController>().updateIndex(index: 3); // got to profile page
 
         Get.back();
-
       } else {
         Get.snackbar(
           "Oops!",
@@ -130,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
             child: SingleChildScrollView(
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                padding: EdgeInsets.only(top: 10, left: 20, bottom: 10, right: 0),
+                padding: EdgeInsets.only(top: 10, left: 20, bottom: 10, right: 20),
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.blueGrey[100].withAlpha(245)),
                 child: Form(
@@ -140,6 +137,10 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(height: 20),
+                      Text(
+                        "Login",
+                        style: Get.textTheme.headline6,
+                      ),
                       TextFormField(
                         autofocus: false,
                         controller: _emailTextFieldController,
@@ -152,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         decoration: inputDecoration.copyWith(hintText: 'Enter your email address', labelText: 'Email'),
                       ),
-                      Divider(endIndent: 15),
+                      Divider(),
                       SizedBox(height: 10),
                       TextFormField(
                         controller: _passwordTextFieldController,
@@ -163,11 +164,29 @@ class _LoginPageState extends State<LoginPage> {
                         textInputAction: TextInputAction.done,
                         onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
                         validator: (String value) {
-                          return value.length < 8 ? "At least 8 characters required" : null;
+                          return value.length == 0 ? "password required" : null;
                         },
                         decoration: inputDecoration.copyWith(hintText: 'Enter Password', labelText: 'Password'),
                       ),
-                      Divider(endIndent: 15),
+                      Divider(),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: ButtonTheme(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          height: 10,
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+
+                          child: FlatButton(
+                            child: Text(
+                              "Forgot password",
+                              style: TextStyle(color: Colors.blue, fontFamily: "Medium"),
+                            ),
+                            onPressed: () {
+                              //todo account password reset
+                            },
+                          ),
+                        ),
+                      ),
                       SizedBox(height: 10),
                       ButtonTheme(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -192,7 +211,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: FlatButton(
                           child: Text(
                             "Don't have account",
-                            style: TextStyle(color: Colors.blue),
+                            style: TextStyle(color: Colors.blue, fontFamily: "Medium"),
                           ),
                           onPressed: () {
                             Get.off(RegisterPage());
