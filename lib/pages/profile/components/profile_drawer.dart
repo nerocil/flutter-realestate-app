@@ -1,11 +1,19 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_real_estate/common/appHelper.dart';
+import 'package:flutter_real_estate/controllers/navigation_bottom_controller.dart';
+import 'package:flutter_real_estate/controllers/user_controller.dart';
+import 'package:flutter_real_estate/pages/auth/pages/login_page.dart';
 import 'package:flutter_real_estate/pages/profile/pages/manage_profile.dart';
+import 'package:flutter_real_estate/servieces/http_service.dart';
 import 'package:get/get.dart';
 
 import 'action_list.dart';
 
 class ProfileDrawer extends StatelessWidget {
+
+  final UserController _userController = Get.find<UserController>();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -43,12 +51,24 @@ class ProfileDrawer extends StatelessWidget {
                         ButtonTheme(
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                           child: FlatButton(
-                            color: Colors.green[700],
-                            onPressed: () {},
-                            child: Text(
-                              "Upgrade now",
-                              style: TextStyle(fontFamily: "medium", color: Colors.white),
-                            ),
+                                color: Colors.green[700],
+                                onPressed: () async{
+
+                                  final response = await HttpService().userLogout(url: "/user/logout", token: _userController.userToken.value);
+                                  if(response.statusCode == 200){
+                                    print(response.data);
+                                    _userController.updateUserToken(token: null);
+                                    AppHelper.removeLocalData();
+                                    Get.find<NavigationBottomController>().updateIndex(index: 0);
+                                    Navigator.of(context).pop();
+                                    Get.to(LoginPage());
+                                  }
+
+                                },
+                                child: Text(
+                                  "Logout",
+                                  style: TextStyle(fontFamily: "medium", color: Colors.white),
+                                ),
                           ),
                         ),
                       ],

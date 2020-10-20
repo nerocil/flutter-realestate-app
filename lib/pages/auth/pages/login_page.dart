@@ -4,22 +4,20 @@ import 'package:flutter_real_estate/controllers/navigation_bottom_controller.dar
 import 'package:flutter_real_estate/controllers/user_controller.dart';
 import 'package:flutter_real_estate/models/user_response.dart';
 import 'package:flutter_real_estate/common/appHelper.dart';
-import 'package:flutter_real_estate/pages/auth/pages/login_page.dart';
+import 'package:flutter_real_estate/pages/auth/pages/register_page.dart';
 import 'package:flutter_real_estate/pages/profile/pages/profile_page.dart';
 import 'package:flutter_real_estate/servieces/http_service.dart';
 import 'package:get/get.dart';
 
-class RegisterPage extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _LoginPageState extends State<LoginPage> {
   final UserController _userController = Get.find<UserController>();
   final _formKey = GlobalKey<FormState>();
   final _registerScaffoldKey = GlobalKey<ScaffoldState>();
-  final _firstNameTextFieldController = TextEditingController();
-  final _lastNameTextFieldController = TextEditingController();
   final _emailTextFieldController = TextEditingController();
   final _passwordTextFieldController = TextEditingController();
 
@@ -28,8 +26,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    _firstNameTextFieldController.dispose();
-    _lastNameTextFieldController.dispose();
     _emailTextFieldController.dispose();
     _passwordTextFieldController.dispose();
     super.dispose();
@@ -43,12 +39,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
     if (_formKey.currentState.validate()) {
       final response = await HttpService().userAuth(
-        url: '/user/register',
+        url: '/user/login',
         user: User(
           country: "Tz",
           //todo make choice for country
-          firstName: _firstNameTextFieldController.text,
-          lastName: _lastNameTextFieldController.text,
           email: _emailTextFieldController.text,
           password: _passwordTextFieldController.text,
           passwordConfirmation: _passwordTextFieldController.text,
@@ -71,6 +65,8 @@ class _RegisterPageState extends State<RegisterPage> {
           );
           return;
         }
+
+
 
         await AppHelper.setToken(token: userResponse.user.token);
         String userToken = userResponse.user.token;
@@ -146,41 +142,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       SizedBox(height: 20),
                       TextFormField(
                         autofocus: false,
-                        controller: _firstNameTextFieldController,
-                        textCapitalization: TextCapitalization.sentences,
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.deny(RegExp(r"\s")),
-                          FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z]"))
-                        ],
-                        validator: (value) {
-                          return value.trim().length < 3 ? 'Name at-least three characters' : null;
-                        },
-                        decoration:
-                            inputDecoration.copyWith(hintText: 'Enter your first name', labelText: 'First name'),
-                      ),
-                      Divider(endIndent: 15),
-                      SizedBox(height: 10),
-                      TextFormField(
-                        autofocus: false,
-                        controller: _lastNameTextFieldController,
-                        textCapitalization: TextCapitalization.sentences,
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.deny(RegExp(r"\s")),
-                          FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z]"))
-                        ],
-                        validator: (value) {
-                          return value.trim().length < 3 ? 'Name at-least three characters' : null;
-                        },
-                        decoration: inputDecoration.copyWith(hintText: 'Enter your last name', labelText: 'Last name'),
-                      ),
-                      Divider(endIndent: 15),
-                      SizedBox(height: 10),
-                      TextFormField(
-                        autofocus: false,
                         controller: _emailTextFieldController,
                         textInputAction: TextInputAction.next,
                         onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
@@ -214,7 +175,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         height: 45,
                         child: RaisedButton(
                           child: Text(
-                            _isLoading ? "Loading..." : "Register",
+                            _isLoading ? "Loading..." : "Login",
                             style: TextStyle(color: Colors.white),
                           ),
                           color: Colors.blue,
@@ -230,11 +191,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         child: FlatButton(
                           child: Text(
-                            "Already have account",
+                            "Don't have account",
                             style: TextStyle(color: Colors.blue),
                           ),
                           onPressed: () {
-                            Get.off(LoginPage());
+                            Get.off(RegisterPage());
                           },
                         ),
                       ),

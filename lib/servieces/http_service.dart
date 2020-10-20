@@ -55,4 +55,10 @@ class HttpService{
     Dio dio = Dio(dioOption());
     return await dio.post(url, data: user.toJson());
   }
+
+  Future<Response> userLogout({@required String url, @required String token}) async {
+    this.token = token;
+    Dio dio = Dio(dioOption());
+    return await dio.get(url);
+  }
 }

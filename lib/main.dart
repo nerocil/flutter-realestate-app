@@ -1,13 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_real_estate/common/appHelper.dart';
+import 'package:flutter_real_estate/controllers/navigation_bottom_controller.dart';
 import 'package:flutter_real_estate/controllers/user_controller.dart';
-import 'package:flutter_real_estate/models/user_response.dart';
 import 'package:flutter_real_estate/pages/home/land_page.dart';
 import 'package:get/get.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Get.put(UserController());
+  Get.put(NavigationBottomController());
   runApp(MyApp());
 }
 
@@ -17,25 +19,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final UserController userController = Get.put(UserController());
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      String jsonUser = await AppHelper.getUser();
-      String token = await AppHelper.getToken();
-
-      if (token != null) {
-        Get.find<UserController>().updateUser(user: User.fromJson(jsonDecode(jsonUser)));
-        Get.find<UserController>().updateUserToken(token: token);
-
-
-        print(Get.find<UserController>().userToken);
-        print(Get.find<UserController>().userResponse.value.user.email);
-      }
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
