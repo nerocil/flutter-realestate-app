@@ -5,7 +5,6 @@ import 'package:flutter_real_estate/controllers/user_controller.dart';
 import 'package:flutter_real_estate/models/user_response.dart';
 import 'package:flutter_real_estate/common/appHelper.dart';
 import 'package:flutter_real_estate/pages/auth/pages/register_page.dart';
-import 'package:flutter_real_estate/pages/profile/pages/profile_page.dart';
 import 'package:flutter_real_estate/services/http_service.dart';
 import 'package:get/get.dart';
 
@@ -15,7 +14,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final UserController _userController = Get.find<UserController>();
   final _formKey = GlobalKey<FormState>();
   final _registerScaffoldKey = GlobalKey<ScaffoldState>();
   final _emailTextFieldController = TextEditingController();
@@ -38,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     if (_formKey.currentState.validate()) {
+      final _userController = Get.find<UserController>();
       final response = await HttpService().userAuth(
         url: '/user/login',
         user: User(

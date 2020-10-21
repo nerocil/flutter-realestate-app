@@ -24,7 +24,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return GetX<NavigationBottomController>(
-      init: NavigationBottomController(),
       builder: (controller) {
         return Scaffold(
               backgroundColor: Colors.white,
@@ -40,7 +39,7 @@ class _HomePageState extends State<HomePage> {
               ),
               bottomNavigationBar: BottomNavigationBar(
                   unselectedItemColor: Colors.grey,
-                  selectedItemColor: Colors.green[700],
+                  selectedItemColor: Colors.blue,
                   showUnselectedLabels: true,
                   currentIndex: controller.currentIndex.value,
                   onTap: (index) {

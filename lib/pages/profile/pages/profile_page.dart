@@ -1,12 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_real_estate/common/appHelper.dart';
 import 'package:flutter_real_estate/common/color_coverter.dart';
 import 'package:flutter_real_estate/controllers/user_controller.dart';
+import 'package:flutter_real_estate/models/user_response.dart';
 import 'package:flutter_real_estate/pages/profile/components/my_client.dart';
 import 'package:flutter_real_estate/pages/profile/components/my_dalali.dart';
 import 'package:flutter_real_estate/pages/profile/components/manage_account.dart';
 import 'package:flutter_real_estate/pages/profile/components/profile_drawer.dart';
+import 'package:flutter_real_estate/services/http_service.dart';
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -15,6 +22,78 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _profileScaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool _isLoading = false;
+
+  _getImageFile({@required bool isFromCamera}) async {
+    var pickedFile;
+    setState(() {
+      _isLoading = true;
+    });
+
+    if (isFromCamera) {
+      pickedFile = await ImagePicker().getImage(source: ImageSource.camera);
+    } else {
+      pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+    }
+
+    File file = File(pickedFile.path);
+
+    if (file != null) {
+      File croppedImage = await ImageCropper.cropImage(
+        sourcePath: file.path,
+        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+        cropStyle: CropStyle.rectangle,
+        compressQuality: 80,
+        compressFormat: ImageCompressFormat.jpg,
+        maxWidth: 200,
+        maxHeight: 200,
+        androidUiSettings: AndroidUiSettings(
+          toolbarColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.square,
+          toolbarTitle: "Edit image",
+          showCropGrid: false,
+          statusBarColor: Colors.white,
+          backgroundColor: Colors.white,
+        ),
+      );
+
+      final userController = Get.find<UserController>();
+      final response = await HttpService()
+          .uploadUserImage(url: "/user/uploadImage/user", file: croppedImage, token: userController.userToken.value);
+
+      print(userController.userToken.value);
+      print(response.data);
+
+      if (response.statusCode == 200) {
+        final userResponse = UserResponse.fromJson(response.data);
+
+        if (userResponse.error) {
+          Get.snackbar("Oops!", "Could not upload image",
+              backgroundColor: Colors.pink[100], snackPosition: SnackPosition.BOTTOM, borderRadius: 10);
+          setState(() {
+            _isLoading = false;
+          });
+          return;
+        }
+
+        await AppHelper.setUser(user: userResponse.user);
+        userController.updateUser(user: userResponse.user);
+        Get.snackbar("Successful", userResponse.message,
+            backgroundColor: Colors.green[100], snackPosition: SnackPosition.BOTTOM, borderRadius: 10);
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      Get.snackbar("Oops!", "Could not upload image",
+          backgroundColor: Colors.pink[100], snackPosition: SnackPosition.BOTTOM, borderRadius: 10);
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,15 +138,68 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 Material(
                                   child: InkWell(
-                                    onTap:(){},
+                                    onTap: () async {
+                                      await Get.defaultDialog(
+                                        title: "User profile image",
+                                        middleText: "Select image source below",
+                                        radius: 10,
+                                        actions: [
+                                          ButtonTheme(
+                                            child: FlatButton.icon(
+                                              label: Text("Camera",
+                                                  style: TextStyle(
+                                                    color: Colors.blue,
+                                                  )),
+                                              onPressed: () {
+                                                _getImageFile(isFromCamera: true);
+                                                Get.back();
+                                              },
+                                              icon: Icon(Icons.camera, color: Colors.blue),
+                                            ),
+                                          ),
+                                          ButtonTheme(
+                                            child: FlatButton.icon(
+                                              label: Text("Gallery",
+                                                  style: TextStyle(
+                                                    color: Colors.blue,
+                                                  )),
+                                              onPressed: () {
+                                                _getImageFile(isFromCamera: false);
+                                                Get.back();
+                                              },
+                                              icon: Icon(Icons.folder, color: Colors.blue),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
-                                      child: Image(
-                                        image: AssetImage("assets/images/default.jpg"),
-                                        height: 110,
-                                        width: 100,
-                                        fit: BoxFit.cover,
-                                      ),
+                                      child: GetX<UserController>(builder: (userController) {
+                                        return Container(
+                                          height: 100,
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                                image: userController.userData.value.image == null
+                                                    ? AssetImage("assets/images/default.jpg")
+                                                    : NetworkImage(
+                                                        HttpService.imageUrl + userController.userData.value.image),
+                                                fit: BoxFit.cover),
+                                          ),
+                                          child: _isLoading
+                                              ? Center(
+                                                  child: SizedBox(
+                                                  height: 40,
+                                                  width: 40,
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 3,
+                                                    backgroundColor: Colors.white,
+                                                  ),
+                                                ))
+                                              : null,
+                                        );
+                                      }),
                                     ),
                                   ),
                                 ),
@@ -76,75 +208,75 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: GetX<UserController>(
                                       //init: UserController(),
                                       builder: (userController) {
-                                        return Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "${userController.userData.value.name}",
-                                              style: Get.textTheme.headline6.copyWith(fontFamily: "Medium"),
-                                            ),
-                                            Text(
-                                              "${userController.userData.value.email}",
-                                              style: TextStyle(color: Colors.grey, fontSize: 13),
-                                            ),
-                                            SizedBox(height: 10),
-                                            Container(
-                                              padding: EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(10),
-                                                color: Colors.blueGrey.withOpacity(.2),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${userController.userData.value.name}",
+                                          style: Get.textTheme.headline6.copyWith(fontFamily: "Medium"),
+                                        ),
+                                        Text(
+                                          "${userController.userData.value.email}",
+                                          style: TextStyle(color: Colors.grey, fontSize: 13),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Container(
+                                          padding: EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(8),
+                                            color: Colors.blueGrey.withOpacity(.2),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
                                                 children: [
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        "Property",
-                                                        style: TextStyle(
-                                                            color: Colors.blueGrey, fontFamily: "medium", fontSize: 14),
-                                                      ),
-                                                      SizedBox(height: 5),
-                                                      Text(
-                                                        "12",
-                                                        style: Get.textTheme.headline6.copyWith(fontFamily: "Medium"),
-                                                      ),
-                                                    ],
+                                                  Text(
+                                                    "Property",
+                                                    style: TextStyle(
+                                                        color: Colors.blueGrey, fontFamily: "medium", fontSize: 14),
                                                   ),
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        "Available",
-                                                        style: TextStyle(
-                                                            color: Colors.blueGrey, fontFamily: "medium", fontSize: 14),
-                                                      ),
-                                                      SizedBox(height: 5),
-                                                      Text(
-                                                        "4",
-                                                        style: Get.textTheme.headline6.copyWith(fontFamily: "Medium"),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        "Dalali",
-                                                        style: TextStyle(
-                                                            color: Colors.blueGrey, fontFamily: "medium", fontSize: 14),
-                                                      ),
-                                                      SizedBox(height: 5),
-                                                      Text(
-                                                        "2",
-                                                        style: Get.textTheme.headline6.copyWith(fontFamily: "Medium"),
-                                                      ),
-                                                    ],
+                                                  SizedBox(height: 5),
+                                                  Text(
+                                                    "12",
+                                                    style: Get.textTheme.headline6.copyWith(fontFamily: "Medium"),
                                                   ),
                                                 ],
                                               ),
-                                            ),
-                                          ],
-                                        );
-                                      }),
+                                              Column(
+                                                children: [
+                                                  Text(
+                                                    "Available",
+                                                    style: TextStyle(
+                                                        color: Colors.blueGrey, fontFamily: "medium", fontSize: 14),
+                                                  ),
+                                                  SizedBox(height: 5),
+                                                  Text(
+                                                    "4",
+                                                    style: Get.textTheme.headline6.copyWith(fontFamily: "Medium"),
+                                                  ),
+                                                ],
+                                              ),
+                                              Column(
+                                                children: [
+                                                  Text(
+                                                    "Dalali",
+                                                    style: TextStyle(
+                                                        color: Colors.blueGrey, fontFamily: "medium", fontSize: 14),
+                                                  ),
+                                                  SizedBox(height: 5),
+                                                  Text(
+                                                    "2",
+                                                    style: Get.textTheme.headline6.copyWith(fontFamily: "Medium"),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }),
                                 )
                               ],
                             ),
@@ -170,7 +302,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: ButtonTheme(
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                                     child: FlatButton(
-                                      color: Colors.green[700],
+                                      color: Colors.blue,
                                       onPressed: () {},
                                       child: Text(
                                         "Upgrade now",

@@ -14,7 +14,6 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final UserController _userController = Get.find<UserController>();
   final _formKey = GlobalKey<FormState>();
   final _registerScaffoldKey = GlobalKey<ScaffoldState>();
   final _firstNameTextFieldController = TextEditingController();
@@ -41,6 +40,8 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     if (_formKey.currentState.validate()) {
+      final _userController = Get.find<UserController>();
+
       final response = await HttpService().userAuth(
         url: '/user/register',
         user: User(

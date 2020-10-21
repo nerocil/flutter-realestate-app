@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_real_estate/models/user_response.dart';
@@ -17,7 +19,7 @@ class HttpService{
   medias are stored in public folder in server so imageUrl is defined
   */
  static final String baseUrl = "http://192.168.43.62/api/v1",
-     imageUrl = "http://192.168.43.62";
+     imageUrl = "http://192.168.43.62/";
  
 
  /*
@@ -66,5 +68,16 @@ class HttpService{
     this.token = token;
     Dio dio = Dio(dioOption());
     return await dio.patch(url, data: user.toJson());
+  }
+
+  Future<Response> uploadUserImage({@required String url, @required File file, @required String token}) async {
+    this.token = token;
+    Dio dio = Dio(dioOption());
+
+    FormData formData = FormData.fromMap({
+      "image": await MultipartFile.fromFile(file.path,
+          filename: file.path.split('/').last),
+    });
+    return await dio.post(url, data: formData );
   }
 }

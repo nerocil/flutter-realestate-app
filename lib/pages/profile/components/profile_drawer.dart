@@ -26,14 +26,21 @@ class ProfileDrawer extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image(
-                        image: AssetImage("assets/images/300_14.jpg"),
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.cover,
-                      )),
+                  GetX<UserController>(
+                    builder: (userController) {
+                      return ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image(
+                            image: userController.userData.value.image == null
+                                ? AssetImage("assets/images/default.jpg")
+                                : NetworkImage(
+                                HttpService.imageUrl + userController.userData.value.image),
+                            height: 100,
+                            width: 100,
+                            fit: BoxFit.cover,
+                          ));
+                    }
+                  ),
                   SizedBox(width: 10),
                   Expanded(
                     child: Column(
@@ -51,22 +58,10 @@ class ProfileDrawer extends StatelessWidget {
                         ButtonTheme(
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                           child: FlatButton(
-                                color: Colors.green[700],
-                                onPressed: () async{
-
-                                  final response = await HttpService().userLogout(url: "/user/logout", token: _userController.userToken.value);
-                                  if(response.statusCode == 200){
-                                    print(response.data);
-                                    _userController.updateUserToken(token: null);
-                                    AppHelper.removeLocalData();
-                                    Get.find<NavigationBottomController>().updateIndex(index: 0);
-                                    Navigator.of(context).pop();
-                                    Get.to(LoginPage());
-                                  }
-
-                                },
+                                color: Colors.blue[700],
+                                onPressed: () async{},
                                 child: Text(
-                                  "Logout",
+                                  "Upgrade now",
                                   style: TextStyle(fontFamily: "medium", color: Colors.white),
                                 ),
                           ),
@@ -89,7 +84,10 @@ class ProfileDrawer extends StatelessWidget {
                   title: "Account",
                   subTitle: "Edit and manage your account details",
                   proFeature: false,
-                  onTap: () {Get.to(ManageAccount());},
+                  onTap: () {
+                    //Navigator.of(context).pop();
+                    Get.to(ManageAccount());
+                    },
                 ),
                 Divider(),
                 ActionList(

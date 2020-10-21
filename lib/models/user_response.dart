@@ -39,6 +39,8 @@ class User {
   String passwordConfirmation;
   String emailVerifiedAt;
   Favorites favorites;
+  Client client;
+  Dalali dalali;
   int status;
   String deletedAt;
   String createdAt;
@@ -62,6 +64,8 @@ class User {
         this.passwordConfirmation,
         this.emailVerifiedAt,
         this.favorites,
+        this.client,
+        this.dalali,
         this.status,
         this.deletedAt,
         this.createdAt,
@@ -89,6 +93,10 @@ class User {
     favorites = json['favorites'] != null
         ? new Favorites.fromJson(json['favorites'])
         : null;
+    client =
+    json['client'] != null ? new Client.fromJson(json['client']) : null;
+    dalali =
+    json['dalali'] != null ? new Dalali.fromJson(json['dalali']) : null;
     status = json['status'];
     deletedAt = json['deleted_at'];
     createdAt = json['created_at'];
@@ -107,8 +115,6 @@ class User {
     data['name'] = this.name;
     data['first_name'] = this.firstName;
     data['last_name'] = this.lastName;
-    data['password'] = this.password;
-    data['password_confirmation'] = this.passwordConfirmation;
     if (this.phone != null) {
       data['phone'] = this.phone.toJson();
     }
@@ -116,9 +122,17 @@ class User {
     data['business_email'] = this.businessEmail;
     data['image'] = this.image;
     data['email'] = this.email;
+    data['password'] = this.password;
+    data['password_confirmation'] = this.passwordConfirmation;
     data['email_verified_at'] = this.emailVerifiedAt;
     if (this.favorites != null) {
       data['favorites'] = this.favorites.toJson();
+    }
+    if (this.client != null) {
+      data['client'] = this.client.toJson();
+    }
+    if (this.dalali != null) {
+      data['dalali'] = this.dalali.toJson();
     }
     data['status'] = this.status;
     data['deleted_at'] = this.deletedAt;
@@ -131,15 +145,13 @@ class User {
 
 class AccountType {
   bool customer;
-  List<int> dalali;
   bool client;
   bool pro;
 
-  AccountType({this.customer, this.dalali, this.client, this.pro});
+  AccountType({this.customer, this.client, this.pro});
 
   AccountType.fromJson(Map<String, dynamic> json) {
     customer = json['Customer'];
-    dalali = json['Dalali'].cast<int>();
     client = json['Client'];
     pro = json['Pro'];
   }
@@ -147,7 +159,6 @@ class AccountType {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['Customer'] = this.customer;
-    data['Dalali'] = this.dalali;
     data['Client'] = this.client;
     data['Pro'] = this.pro;
     return data;
@@ -185,6 +196,38 @@ class Favorites {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['favorite_list'] = this.favoriteList;
+    return data;
+  }
+}
+
+class Client {
+  List<int> clientList;
+
+  Client({this.clientList});
+
+  Client.fromJson(Map<String, dynamic> json) {
+    clientList = json['client_list'].cast<int>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['client_list'] = this.clientList;
+    return data;
+  }
+}
+
+class Dalali {
+  List<int> dalali;
+
+  Dalali({this.dalali});
+
+  Dalali.fromJson(Map<String, dynamic> json) {
+    dalali = json['dalali'].cast<int>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['dalali'] = this.dalali;
     return data;
   }
 }

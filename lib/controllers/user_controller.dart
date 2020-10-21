@@ -46,6 +46,8 @@ class UserController extends GetxController{
       value.passwordConfirmation = user.passwordConfirmation;
       value.emailVerifiedAt = user.emailVerifiedAt;
       value.favorites = user.favorites;
+      value.client = user.client;
+      value.dalali = user.dalali;
       value.status = user.status;
       value.deletedAt = user.deletedAt;
       value.createdAt = user.createdAt;

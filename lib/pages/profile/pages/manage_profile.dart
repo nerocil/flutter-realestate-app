@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_real_estate/common/appHelper.dart';
+import 'package:flutter_real_estate/controllers/navigation_bottom_controller.dart';
 import 'package:flutter_real_estate/controllers/user_controller.dart';
 import 'package:flutter_real_estate/models/user_response.dart';
+import 'package:flutter_real_estate/pages/auth/pages/login_page.dart';
 import 'package:flutter_real_estate/services/http_service.dart';
 import 'package:get/get.dart';
 
@@ -112,7 +114,7 @@ class _ManageAccountState extends State<ManageAccount> {
                     padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Colors.green[700],
+                      color: Colors.blue[700],
                     ),
                     child: Icon(
                       Icons.build,
@@ -141,213 +143,227 @@ class _ManageAccountState extends State<ManageAccount> {
               ),
             ),
             GetX<UserController>(
-              //init: UserController(),
               builder: (userController) {
                 final user = userController.userData.value;
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  padding: EdgeInsets.only(top: 20, left: 20, bottom: 20, right: 0),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.blueGrey[100]),
-                  child: Form(
-                    key: _userFormKey,
-                    autovalidate: _userFormAutoValidate,
-                    child: Column(
-                      children: [
-                        Column(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                return Column(
+                  children: [
+                    Container(
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          padding: EdgeInsets.only(top: 20, left: 20, bottom: 0, right: 0),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight:Radius.circular(10)), color: Colors.blueGrey[100]),
+                          child: Form(
+                            key: _userFormKey,
+                            autovalidate: _userFormAutoValidate,
+                            child: Column(
                               children: [
-                                ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image(
-                                      image: AssetImage("assets/images/300_14.jpg"),
-                                      height: 45,
-                                      width: 45,
-                                      fit: BoxFit.cover,
-                                    )),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      SizedBox(height: 3),
-                                      Text(
-                                        user.name ?? "",
-                                        style: Get.textTheme.headline6.copyWith(fontFamily: "Medium", color: Colors.black),
-                                      ),
-                                      SizedBox(height: 3),
-                                      Text(
-                                        user.email,
-                                        style: TextStyle(color: Colors.blueGrey[400], fontFamily: "medium", fontSize: 15),
-                                      ),
-                                    ],
-                                  ),
-                                ),
                                 Column(
                                   children: [
-                                    SizedBox(height: 10),
-                                    Center(
-                                        child: Icon(
-                                      Icons.keyboard_arrow_right,
-                                      color: Colors.grey,
-                                    )),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        ClipRRect(
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: Container(
+                                              height: 45,
+                                              width: 45,
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: userController.userData.value.image == null
+                                                      ? AssetImage("assets/images/default.jpg")
+                                                      : NetworkImage(
+                                                      HttpService.imageUrl + userController.userData.value.image),
+                                                  fit: BoxFit.cover
+                                                )
+                                              ),
+                                            )),
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              SizedBox(height: 3),
+                                              Text(
+                                                user.name ?? "",
+                                                style: Get.textTheme.headline6.copyWith(fontFamily: "Medium", color: Colors.black),
+                                              ),
+                                              SizedBox(height: 3),
+                                              Text(
+                                                user.email,
+                                                style: TextStyle(color: Colors.blueGrey[400], fontFamily: "medium", fontSize: 15),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Column(
+                                          children: [
+                                            SizedBox(height: 10),
+                                            Center(
+                                                child: Icon(
+                                              Icons.keyboard_arrow_right,
+                                              color: Colors.grey,
+                                            )),
+                                          ],
+                                        ),
+                                        SizedBox(width: 12),
+                                      ],
+                                    ),
                                   ],
                                 ),
-                                SizedBox(width: 12),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        TextFormField(
-                          autofocus: false,
-                          initialValue: user.firstName??"",
-                          textCapitalization: TextCapitalization.sentences,
-                          textInputAction: TextInputAction.next,
-                          onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.deny(RegExp(r"\s")),
-                            FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z]"))
-                          ],
-                          validator: (value) {
-                            return value.trim().length < 3 ? 'Name at-least three characters' : null;
-                          },
-                          onSaved: (value){ print("values is $value"); user.firstName = value; },
-                          decoration:
-                          inputDecoration.copyWith(hintText: 'Enter your first name', labelText: 'First name'),
-                        ),
-                        Divider(endIndent: 15),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          autofocus: false,
-                          initialValue: user.lastName??"",
-                          textCapitalization: TextCapitalization.sentences,
-                          textInputAction: TextInputAction.next,
-                          onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.deny(RegExp(r"\s")),
-                            FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z]"))
-                          ],
-                          validator: (value) {
-                            return value.trim().length < 3 ? 'Name at-least three characters' : null;
-                          },
-                          onSaved: (value){ user.lastName = value; },
-                          decoration:
-                          inputDecoration.copyWith(hintText: 'Enter your last name', labelText: 'Last name'),
-                        ),
-                        Divider(endIndent: 15),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          autofocus: false,
-                          initialValue: user.businessEmail ?? user.email ?? "",
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
-                          onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.deny(RegExp(r"\s")),
-                          ],
-                          validator: (value) {
-                            return !GetUtils.isEmail(value) ? "Enter valid email" : null;
-                          },
-                          onSaved: (value){ user.businessEmail = value; },
-                          decoration:
-                          inputDecoration.copyWith(hintText: 'Enter business email ', labelText: 'Business email (if not applied default login email used)', hintMaxLines: 2),
-                        ),
-                        Divider(endIndent: 15),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          autofocus: false,
-                          initialValue: user.phone.phone1 ?? "",
-                          keyboardType: TextInputType.phone,
-                          textInputAction: TextInputAction.done,
-                          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.deny(RegExp(r"\s")),
-                            FilteringTextInputFormatter.allow(RegExp(r"[0-9]"))
-                          ],
-                          validator: (value) {
+                                SizedBox(height: 20),
+                                TextFormField(
+                                  autofocus: false,
+                                  initialValue: user.firstName??"",
+                                  textCapitalization: TextCapitalization.sentences,
+                                  textInputAction: TextInputAction.next,
+                                  onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.deny(RegExp(r"\s")),
+                                    FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z]"))
+                                  ],
+                                  validator: (value) {
+                                    return value.trim().length < 3 ? 'Name at-least three characters' : null;
+                                  },
+                                  onSaved: (value){ print("values is $value"); user.firstName = value; },
+                                  decoration:
+                                  inputDecoration.copyWith(hintText: 'Enter your first name', labelText: 'First name'),
+                                ),
+                                Divider(endIndent: 15),
+                                SizedBox(height: 10),
+                                TextFormField(
+                                  autofocus: false,
+                                  initialValue: user.lastName??"",
+                                  textCapitalization: TextCapitalization.sentences,
+                                  textInputAction: TextInputAction.next,
+                                  onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.deny(RegExp(r"\s")),
+                                    FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z]"))
+                                  ],
+                                  validator: (value) {
+                                    return value.trim().length < 3 ? 'Name at-least three characters' : null;
+                                  },
+                                  onSaved: (value){ user.lastName = value; },
+                                  decoration:
+                                  inputDecoration.copyWith(hintText: 'Enter your last name', labelText: 'Last name'),
+                                ),
+                                Divider(endIndent: 15),
+                                SizedBox(height: 10),
+                                TextFormField(
+                                  autofocus: false,
+                                  initialValue: user.businessEmail ?? user.email ?? "",
+                                  keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.next,
+                                  onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.deny(RegExp(r"\s")),
+                                  ],
+                                  validator: (value) {
+                                    return !GetUtils.isEmail(value) ? "Enter valid email" : null;
+                                  },
+                                  onSaved: (value){ user.businessEmail = value; },
+                                  decoration:
+                                  inputDecoration.copyWith(hintText: 'Enter business email ', labelText: 'Business email (if not applied default login email used)', hintMaxLines: 2),
+                                ),
+                                Divider(endIndent: 15),
+                                SizedBox(height: 10),
+                                TextFormField(
+                                  autofocus: false,
+                                  initialValue: user.phone.phone1 ?? "",
+                                  keyboardType: TextInputType.phone,
+                                  textInputAction: TextInputAction.done,
+                                  onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.deny(RegExp(r"\s")),
+                                    FilteringTextInputFormatter.allow(RegExp(r"[0-9]"))
+                                  ],
+                                  validator: (value) {
+                                      return value.length < 9 ? "Enter valid phone number" :null;
+                                  },
+                                  onSaved: (value){ user.phone.phone1 = value; },
+                                  decoration:
+                                  inputDecoration.copyWith(hintText: 'Enter phone number', labelText: 'Phone number'),
+                                ),
+                                Divider(endIndent: 15),
+                                SizedBox(height: 10),
+                                TextFormField(
+                                  autofocus: false,
+                                  initialValue: user.phone.phone2 ?? "",
+                                  keyboardType: TextInputType.phone,
+                                  textInputAction: TextInputAction.done,
+                                  onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.deny(RegExp(r"\s")),
+                                    FilteringTextInputFormatter.allow(RegExp(r"[0-9]"))
+                                  ],
+                                  onSaved: (value){ user.phone.phone2 = value; },
+                                  decoration:
+                                  inputDecoration.copyWith(hintText: 'Enter phone number', labelText: 'Phone number'),
+                                ),
+                                Divider(endIndent: 15),
+                                SizedBox(height: 10),
+                                FormField<String>(
+                                  builder: (FormFieldState<String> state) {
+                                    return InputDecorator(
+                                      decoration: inputDecoration
+                                          .copyWith(labelText: "Select country", hintText: "Select country"),
+                                      //isEmpty: false,
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton(
+                                          items: countries.entries
+                                              .map<DropdownMenuItem<String>>(
+                                                  (MapEntry<String, String> e) => DropdownMenuItem<String>(
+                                                value: e.key,
+                                                child: Text( e.value ),
+                                              ))
+                                              .toList(),
 
-                          },
-                          onSaved: (value){ user.phone.phone1 = value; },
-                          decoration:
-                          inputDecoration.copyWith(hintText: 'Enter phone number', labelText: 'Phone number'),
-                        ),
-                        Divider(endIndent: 15),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          autofocus: false,
-                          initialValue: user.phone.phone2 ?? "",
-                          keyboardType: TextInputType.phone,
-                          textInputAction: TextInputAction.done,
-                          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.deny(RegExp(r"\s")),
-                            FilteringTextInputFormatter.allow(RegExp(r"[0-9]"))
-                          ],
-                          validator: (value) {
-                              return value.length < 9 ? "Enter valid phone number" :null;
-                          },
-                          onSaved: (value){ user.phone.phone2 = value; },
-                          decoration:
-                          inputDecoration.copyWith(hintText: 'Enter phone number', labelText: 'Phone number'),
-                        ),
-                        Divider(endIndent: 15),
-                        SizedBox(height: 10),
-                        FormField<String>(
-                          builder: (FormFieldState<String> state) {
-                            return InputDecorator(
-                              decoration: inputDecoration
-                                  .copyWith(labelText: "Select country", hintText: "Select country"),
-                              //isEmpty: false,
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  items: countries.entries
-                                      .map<DropdownMenuItem<String>>(
-                                          (MapEntry<String, String> e) => DropdownMenuItem<String>(
-                                        value: e.key,
-                                        child: Text( e.value ),
-                                      ))
-                                      .toList(),
-
-                                  icon: Icon(Icons.list, color: Colors.transparent,),
-                                  value: selectedCountry ?? user.country?? "Tz",
-                                  onChanged: (String value) {
-                                    FocusScope.of(context).requestFocus(new FocusNode());
-                                    setState(() {
-                                      selectedCountry = value;
-                                    });
-                                    user.country = value;
+                                          icon: Icon(Icons.list, color: Colors.transparent,),
+                                          value: selectedCountry ?? user.country?? "Tz",
+                                          onChanged: (String value) {
+                                            FocusScope.of(context).requestFocus(new FocusNode());
+                                            setState(() {
+                                              selectedCountry = value;
+                                            });
+                                            user.country = value;
+                                          },
+                                        ),
+                                      ),
+                                    );
                                   },
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                        Divider(endIndent: 15),
-                        SizedBox(height: 10),
-                        ButtonTheme(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          minWidth: 200,
-                          height: 45,
-                          child: _isLoading ? CircularProgressIndicator() :RaisedButton(
-                            child:Text(
-                              "Update",
-                              style: TextStyle(color: Colors.white),
+                              ],
                             ),
-                            color: Colors.blue,
-                            onPressed:() {
-                              _updateUserInfo(user: user);
+                          ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      child: ButtonTheme(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight:Radius.circular(10))),
+                        padding:  EdgeInsets.only(top: 20, left: 20, bottom: 20, right: 20),
+                        child:FlatButton(
+                          color: Colors.blue,
+                          disabledColor: Colors.blueGrey[100],
+                          onPressed: _isLoading ? null:(){
+                            _updateUserInfo(user: user);
                             },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _isLoading ? SizedBox(height:20, width:20,child: CircularProgressIndicator(backgroundColor: Colors.white,strokeWidth: 2,)) :Text(
+                                "Update",
+                                style: Get.textTheme.headline6.copyWith(color: Colors.white),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 );
               }
             ),
+
 
             Padding(
               padding: const EdgeInsets.only(left:20.0, right: 20,top: 30, bottom: 15),
@@ -358,7 +374,7 @@ class _ManageAccountState extends State<ManageAccount> {
                     padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Colors.green[700],
+                      color: Colors.blue[700],
                     ),
                     child: Icon(
                       Icons.live_help,
@@ -434,7 +450,7 @@ class _ManageAccountState extends State<ManageAccount> {
                     padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Colors.green[700],
+                      color: Colors.blue[700],
                     ),
                     child: Icon(
                       Icons.build,
@@ -454,7 +470,7 @@ class _ManageAccountState extends State<ManageAccount> {
                         ],
                       ),
                       Text(
-                        "Action may leading of loosing of your data",
+                        "Some action may leading of loosing of your data",
                         style: Get.textTheme.caption,
                       ),
                     ],
@@ -462,6 +478,41 @@ class _ManageAccountState extends State<ManageAccount> {
                 ],
               ),
             ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              child: ButtonTheme(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding:  EdgeInsets.only(top: 20, left: 20, bottom: 20, right: 20),
+                child: FlatButton(
+                  color: Colors.blue,
+                  onPressed: () async{
+                    final userController = Get.find<UserController>();
+                    await HttpService().userLogout(url: "/user/logout", token: userController.userToken.value);
+
+                    userController.updateUserToken(token: null);
+
+                    Get.find<NavigationBottomController>().updateIndex(index: 0);
+                    Navigator.of(context).pop();
+                    AppHelper.removeLocalData();
+                    Get.to(LoginPage());
+                  },
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Logout",
+                            style: Get.textTheme.headline6.copyWith(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 10,),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 20),
               padding: EdgeInsets.only(top: 20, left: 20, bottom: 20, right: 10),
