@@ -9,17 +9,21 @@ this class is for http request. all request are use Dio package
 */
 
 class HttpService{
-  ///live server
-  // static final String baseUrl = "",
-  //     imageUrl = "";
 
   /*
   Local server dev test
   you may need to change the IP address according to yours.
   medias are stored in public folder in server so imageUrl is defined
+  test server address https://estate20.herokuapp.com
   */
- static final String baseUrl = "http://192.168.43.62/api/v1",
-     imageUrl = "http://192.168.43.62/";
+
+ ///test server,
+ static final String baseUrl = "https://estate20.herokuapp.com/api/v1",
+     imageUrl = "https://estate20.herokuapp.com";
+
+ ///local server
+ // static final String baseUrl = "http://192.168.43.62/api/v1",
+ //     imageUrl = "http://192.168.43.62/api/v1/";
  
 
  /*

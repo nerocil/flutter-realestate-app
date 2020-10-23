@@ -18,6 +18,7 @@ class _ManageAccountState extends State<ManageAccount> {
 
   bool _userFormAutoValidate = false;
   bool _isLoading = false;
+  bool _onLogout = false;
   String selectedCountry;
 
   final  countries = {
@@ -485,9 +486,15 @@ class _ManageAccountState extends State<ManageAccount> {
                 padding:  EdgeInsets.only(top: 20, left: 20, bottom: 20, right: 20),
                 child: FlatButton(
                   color: Colors.blue,
-                  onPressed: () async{
+                  disabledColor: Colors.blue,
+                  onPressed: _onLogout ? null :() async{
+
+                    setState(() {
+                      _onLogout = true;
+                    });
                     final userController = Get.find<UserController>();
-                    await HttpService().userLogout(url: "/user/logout", token: userController.userToken.value);
+                    final response = await HttpService().userLogout(url: "/user/logout", token: userController.userToken.value);
+                    print("On login-out ## ${response.data}");
 
                     userController.updateUserToken(token: null);
 
@@ -496,16 +503,12 @@ class _ManageAccountState extends State<ManageAccount> {
                     AppHelper.removeLocalData();
                     Get.to(LoginPage());
                   },
-                  child: Column(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Logout",
-                            style: Get.textTheme.headline6.copyWith(color: Colors.white),
-                          ),
-                        ],
+                      _onLogout ? SizedBox(height:20, width:20,child: CircularProgressIndicator(backgroundColor: Colors.white,strokeWidth: 2,)) :Text(
+                        "Logout",
+                        style: Get.textTheme.headline6.copyWith(color: Colors.white),
                       ),
                     ],
                   ),

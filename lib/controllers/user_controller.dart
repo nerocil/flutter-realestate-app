@@ -24,7 +24,7 @@ class UserController extends GetxController{
       updateUserToken(token: token);
 
       print(userToken.value);
-      print(userData.value.email);
+      print(userData.value.image);
 
     }
   }

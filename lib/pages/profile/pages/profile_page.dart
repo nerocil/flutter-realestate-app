@@ -27,9 +27,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   _getImageFile({@required bool isFromCamera}) async {
     var pickedFile;
-    setState(() {
-      _isLoading = true;
-    });
 
     if (isFromCamera) {
       pickedFile = await ImagePicker().getImage(source: ImageSource.camera);
@@ -40,6 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
     File file = File(pickedFile.path);
 
     if (file != null) {
+
       File croppedImage = await ImageCropper.cropImage(
         sourcePath: file.path,
         aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
@@ -57,6 +55,14 @@ class _ProfilePageState extends State<ProfilePage> {
           backgroundColor: Colors.white,
         ),
       );
+
+      if(croppedImage != null){
+        setState(() {
+        _isLoading = true;
+      });
+      }else{
+        return;
+      }
 
       final userController = Get.find<UserController>();
       final response = await HttpService()
