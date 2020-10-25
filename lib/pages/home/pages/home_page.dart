@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_real_estate/controllers/navigation_bottom_controller.dart';
 import 'package:flutter_real_estate/controllers/user_controller.dart';
 import 'package:flutter_real_estate/pages/auth/pages/login_page.dart';
+import 'package:flutter_real_estate/pages/auth/pages/reset_password.dart';
 import 'package:flutter_real_estate/pages/home/pages/home_tab_page.dart';
 import 'package:flutter_real_estate/pages/profile/pages/profile_page.dart';
 
@@ -43,12 +44,22 @@ class _HomePageState extends State<HomePage> {
                   showUnselectedLabels: true,
                   currentIndex: controller.currentIndex.value,
                   onTap: (index) {
-                    String userToken = Get.find<UserController>().userToken.value;
+                    final userController = Get.find<UserController>();
 
-                    if(userToken == null && index == 3){
-                      Get.to(LoginPage());
-                      return;
+                    if(index == 3){
+                      // if(userController.userToken.value != null && userController.userData.value.emailVerifiedAt == null){
+                      //   Get.to(VerifyEmail());
+                      //   return;
+                      // }
+                      if(userController.userToken.value == null){
+
+                        Get.to(LoginPage());
+                        return;
+                      }
                     }
+
+
+
                     controller.updateIndex(index: index);
                   },
                   items: [

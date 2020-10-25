@@ -36,6 +36,24 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="http"
+                    android:host="3.15.184.96"
+                    android:pathPrefix="/passwordReset" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="http"
+                    android:host="3.15.184.96"
+                    android:pathPrefix="/passwordReset" />
+            </intent-filter>
         </activity>
         <activity android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"

@@ -18,12 +18,12 @@ class HttpService{
   */
 
  ///test server,
- static final String baseUrl = "https://estate20.herokuapp.com/api/v1",
-     imageUrl = "https://estate20.herokuapp.com";
+ static final String baseUrl = "http://3.15.184.96:8080/api/v1",
+     imageUrl = "http://3.15.184.96:8080";
 
  ///local server
  // static final String baseUrl = "http://192.168.43.62/api/v1",
- //     imageUrl = "http://192.168.43.62/api/v1/";
+ //     imageUrl = "http://192.168.43.62";
  
 
  /*
@@ -37,8 +37,8 @@ class HttpService{
     BaseOptions options = new BaseOptions(
       baseUrl: baseUrl,
       receiveDataWhenStatusError: true,
-      connectTimeout: 10000,
-      receiveTimeout: 10000,
+      connectTimeout: 15000,
+      receiveTimeout: 15000,
       followRedirects: false,
       validateStatus: (status) {
         return status < 500;
@@ -83,5 +83,16 @@ class HttpService{
           filename: file.path.split('/').last),
     });
     return await dio.post(url, data: formData );
+  }
+
+  Future<Response> validateEmail({@required String url, @required String token,@required String code}) async{
+    this.token = token;
+    Dio dio = Dio(dioOption());
+    return await dio.post(url, data: {"verification_token": code});
+  }
+
+  Future<Response> resetPassword({String url, String email}) async{
+    Dio dio = Dio(dioOption());
+    return await dio.post(url, data: {"email": email});
   }
 }

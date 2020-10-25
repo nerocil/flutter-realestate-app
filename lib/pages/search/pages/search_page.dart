@@ -7,8 +7,6 @@ import 'package:flutter_real_estate/pages/search/components/component_bedroom.da
 import 'package:flutter_real_estate/pages/search/components/component_esteta_type.dart';
 import 'package:flutter_real_estate/pages/search/components/component_near_by.dart';
 import 'package:flutter_real_estate/pages/search/components/component_rental_frequency.dart';
-import 'package:flutter_real_estate/pages/search/models/search_models.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class SearchPage extends StatefulWidget {

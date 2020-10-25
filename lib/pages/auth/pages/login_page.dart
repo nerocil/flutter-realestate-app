@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_real_estate/common/appHelper.dart';
 import 'package:flutter_real_estate/controllers/navigation_bottom_controller.dart';
 import 'package:flutter_real_estate/controllers/user_controller.dart';
 import 'package:flutter_real_estate/models/user_response.dart';
-import 'package:flutter_real_estate/common/appHelper.dart';
 import 'package:flutter_real_estate/pages/auth/pages/register_page.dart';
+import 'package:flutter_real_estate/pages/auth/pages/reset_password.dart';
 import 'package:flutter_real_estate/services/http_service.dart';
 import 'package:get/get.dart';
 
@@ -66,6 +67,7 @@ class _LoginPageState extends State<LoginPage> {
         }
 
         await AppHelper.setToken(token: userResponse.user.token);
+        print(response.data);
         String userToken = userResponse.user.token;
         userResponse.user.token = null;
         await AppHelper.setUser(user: userResponse.user);
@@ -181,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
                               style: TextStyle(color: Colors.blue, fontFamily: "Medium"),
                             ),
                             onPressed: () {
-                              //todo account password reset
+                              Get.to(ResetPassword());
                             },
                           ),
                         ),
